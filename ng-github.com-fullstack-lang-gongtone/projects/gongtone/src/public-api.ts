@@ -18,3 +18,4 @@ export * from './lib/tone'
 export * from './lib/tone.service'
 
 
+export * from './lib/StacksNames'

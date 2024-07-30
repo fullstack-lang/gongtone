@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 
 import * as Tone from "tone"
 
+import * as gongtone from '../../../../gongtone/src/public-api'
+
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,9 +22,26 @@ export class GongtoneComponent implements OnInit {
 
   synth: Tone.PolySynth<Tone.Synth<Tone.SynthOptions>> | undefined
 
+  StacksNames = gongtone.StacksNames
+
+  public frontRepo?: gongtone.FrontRepo
+
+  constructor(
+    private frontRepoService: gongtone.FrontRepoService,
+  ) {
+
+  }
+
   ngOnInit(): void {
     this.synth = new Tone.PolySynth().toDestination()
 
+    console.log("ngOnInit")
+
+    this.frontRepoService.connectToWebSocket(this.StacksNames.Gongtone).subscribe(
+      gongtablesFrontRepo => {
+        this.frontRepo = gongtablesFrontRepo
+      }
+    )
   }
 
 

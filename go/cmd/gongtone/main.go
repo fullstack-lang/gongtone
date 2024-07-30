@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 
+	gongtone_models "github.com/fullstack-lang/gongtone/go/models"
 	gongtone_stack "github.com/fullstack-lang/gongtone/go/stack"
 	gongtone_static "github.com/fullstack-lang/gongtone/go/static"
 )
@@ -33,7 +34,8 @@ func main() {
 	r := gongtone_static.ServeStaticFiles(*logGINFlag)
 
 	// setup stack
-	stack := gongtone_stack.NewStack(r, "gongtone", *unmarshallFromCode, *marshallOnCommit, "", *embeddedDiagrams, true)
+	stack := gongtone_stack.NewStack(r, gongtone_models.Gongtone.ToString(),
+		*unmarshallFromCode, *marshallOnCommit, "", *embeddedDiagrams, true)
 	stack.Probe.Refresh()
 
 	log.Printf("Server ready serve on localhost:" + strconv.Itoa(*port))

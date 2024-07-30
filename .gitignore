@@ -1,0 +1,3 @@
+node_modules
+go/cmd/gongtone/gongtone
+go/cmd/gongtone/__debug_bin*

@@ -14,16 +14,16 @@ import (
 )
 
 // declaration in order to justify use of the models import
-var __Tone__dummysDeclaration__ models.Tone
-var __Tone_time__dummyDeclaration time.Duration
+var __Note__dummysDeclaration__ models.Note
+var __Note_time__dummyDeclaration time.Duration
 
-var mutexTone sync.Mutex
+var mutexNote sync.Mutex
 
-// An ToneID parameter model.
+// An NoteID parameter model.
 //
 // This is used for operations that want the ID of an order in the path
-// swagger:parameters getTone updateTone deleteTone
-type ToneID struct {
+// swagger:parameters getNote updateNote deleteNote
+type NoteID struct {
 	// The ID of the order
 	//
 	// in: path
@@ -31,29 +31,29 @@ type ToneID struct {
 	ID int64
 }
 
-// ToneInput is a schema that can validate the user’s
+// NoteInput is a schema that can validate the user’s
 // input to prevent us from getting invalid data
-// swagger:parameters postTone updateTone
-type ToneInput struct {
-	// The Tone to submit or modify
+// swagger:parameters postNote updateNote
+type NoteInput struct {
+	// The Note to submit or modify
 	// in: body
-	Tone *orm.ToneAPI
+	Note *orm.NoteAPI
 }
 
-// GetTones
+// GetNotes
 //
-// swagger:route GET /tones tones getTones
+// swagger:route GET /notes notes getNotes
 //
-// # Get all tones
+// # Get all notes
 //
 // Responses:
 // default: genericError
 //
-//	200: toneDBResponse
-func (controller *Controller) GetTones(c *gin.Context) {
+//	200: noteDBResponse
+func (controller *Controller) GetNotes(c *gin.Context) {
 
 	// source slice
-	var toneDBs []orm.ToneDB
+	var noteDBs []orm.NoteDB
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -61,16 +61,16 @@ func (controller *Controller) GetTones(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("GetTones", "GONG__StackPath", stackPath)
+			// log.Println("GetNotes", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongtone/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoTone.GetDB()
+	db := backRepo.BackRepoNote.GetDB()
 
-	query := db.Find(&toneDBs)
+	query := db.Find(&noteDBs)
 	if query.Error != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -81,29 +81,29 @@ func (controller *Controller) GetTones(c *gin.Context) {
 	}
 
 	// slice that will be transmitted to the front
-	toneAPIs := make([]orm.ToneAPI, 0)
+	noteAPIs := make([]orm.NoteAPI, 0)
 
-	// for each tone, update fields from the database nullable fields
-	for idx := range toneDBs {
-		toneDB := &toneDBs[idx]
-		_ = toneDB
-		var toneAPI orm.ToneAPI
+	// for each note, update fields from the database nullable fields
+	for idx := range noteDBs {
+		noteDB := &noteDBs[idx]
+		_ = noteDB
+		var noteAPI orm.NoteAPI
 
 		// insertion point for updating fields
-		toneAPI.ID = toneDB.ID
-		toneDB.CopyBasicFieldsToTone_WOP(&toneAPI.Tone_WOP)
-		toneAPI.TonePointersEncoding = toneDB.TonePointersEncoding
-		toneAPIs = append(toneAPIs, toneAPI)
+		noteAPI.ID = noteDB.ID
+		noteDB.CopyBasicFieldsToNote_WOP(&noteAPI.Note_WOP)
+		noteAPI.NotePointersEncoding = noteDB.NotePointersEncoding
+		noteAPIs = append(noteAPIs, noteAPI)
 	}
 
-	c.JSON(http.StatusOK, toneAPIs)
+	c.JSON(http.StatusOK, noteAPIs)
 }
 
-// PostTone
+// PostNote
 //
-// swagger:route POST /tones tones postTone
+// swagger:route POST /notes notes postNote
 //
-// Creates a tone
+// Creates a note
 //
 //	Consumes:
 //	- application/json
@@ -113,10 +113,10 @@ func (controller *Controller) GetTones(c *gin.Context) {
 //
 //	Responses:
 //	  200: nodeDBResponse
-func (controller *Controller) PostTone(c *gin.Context) {
+func (controller *Controller) PostNote(c *gin.Context) {
 
-	mutexTone.Lock()
-	defer mutexTone.Unlock()
+	mutexNote.Lock()
+	defer mutexNote.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -124,17 +124,17 @@ func (controller *Controller) PostTone(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("PostTones", "GONG__StackPath", stackPath)
+			// log.Println("PostNotes", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongtone/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoTone.GetDB()
+	db := backRepo.BackRepoNote.GetDB()
 
 	// Validate input
-	var input orm.ToneAPI
+	var input orm.NoteAPI
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
@@ -146,12 +146,12 @@ func (controller *Controller) PostTone(c *gin.Context) {
 		return
 	}
 
-	// Create tone
-	toneDB := orm.ToneDB{}
-	toneDB.TonePointersEncoding = input.TonePointersEncoding
-	toneDB.CopyBasicFieldsFromTone_WOP(&input.Tone_WOP)
+	// Create note
+	noteDB := orm.NoteDB{}
+	noteDB.NotePointersEncoding = input.NotePointersEncoding
+	noteDB.CopyBasicFieldsFromNote_WOP(&input.Note_WOP)
 
-	query := db.Create(&toneDB)
+	query := db.Create(&noteDB)
 	if query.Error != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -162,31 +162,31 @@ func (controller *Controller) PostTone(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	backRepo.BackRepoTone.CheckoutPhaseOneInstance(&toneDB)
-	tone := backRepo.BackRepoTone.Map_ToneDBID_TonePtr[toneDB.ID]
+	backRepo.BackRepoNote.CheckoutPhaseOneInstance(&noteDB)
+	note := backRepo.BackRepoNote.Map_NoteDBID_NotePtr[noteDB.ID]
 
-	if tone != nil {
-		models.AfterCreateFromFront(backRepo.GetStage(), tone)
+	if note != nil {
+		models.AfterCreateFromFront(backRepo.GetStage(), note)
 	}
 
 	// a POST is equivalent to a back repo commit increase
 	// (this will be improved with implementation of unit of work design pattern)
 	backRepo.IncrementPushFromFrontNb()
 
-	c.JSON(http.StatusOK, toneDB)
+	c.JSON(http.StatusOK, noteDB)
 }
 
-// GetTone
+// GetNote
 //
-// swagger:route GET /tones/{ID} tones getTone
+// swagger:route GET /notes/{ID} notes getNote
 //
-// Gets the details for a tone.
+// Gets the details for a note.
 //
 // Responses:
 // default: genericError
 //
-//	200: toneDBResponse
-func (controller *Controller) GetTone(c *gin.Context) {
+//	200: noteDBResponse
+func (controller *Controller) GetNote(c *gin.Context) {
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -194,18 +194,18 @@ func (controller *Controller) GetTone(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("GetTone", "GONG__StackPath", stackPath)
+			// log.Println("GetNote", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongtone/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoTone.GetDB()
+	db := backRepo.BackRepoNote.GetDB()
 
-	// Get toneDB in DB
-	var toneDB orm.ToneDB
-	if err := db.First(&toneDB, c.Param("id")).Error; err != nil {
+	// Get noteDB in DB
+	var noteDB orm.NoteDB
+	if err := db.First(&noteDB, c.Param("id")).Error; err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -214,28 +214,28 @@ func (controller *Controller) GetTone(c *gin.Context) {
 		return
 	}
 
-	var toneAPI orm.ToneAPI
-	toneAPI.ID = toneDB.ID
-	toneAPI.TonePointersEncoding = toneDB.TonePointersEncoding
-	toneDB.CopyBasicFieldsToTone_WOP(&toneAPI.Tone_WOP)
+	var noteAPI orm.NoteAPI
+	noteAPI.ID = noteDB.ID
+	noteAPI.NotePointersEncoding = noteDB.NotePointersEncoding
+	noteDB.CopyBasicFieldsToNote_WOP(&noteAPI.Note_WOP)
 
-	c.JSON(http.StatusOK, toneAPI)
+	c.JSON(http.StatusOK, noteAPI)
 }
 
-// UpdateTone
+// UpdateNote
 //
-// swagger:route PATCH /tones/{ID} tones updateTone
+// swagger:route PATCH /notes/{ID} notes updateNote
 //
-// # Update a tone
+// # Update a note
 //
 // Responses:
 // default: genericError
 //
-//	200: toneDBResponse
-func (controller *Controller) UpdateTone(c *gin.Context) {
+//	200: noteDBResponse
+func (controller *Controller) UpdateNote(c *gin.Context) {
 
-	mutexTone.Lock()
-	defer mutexTone.Unlock()
+	mutexNote.Lock()
+	defer mutexNote.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -243,17 +243,17 @@ func (controller *Controller) UpdateTone(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("UpdateTone", "GONG__StackPath", stackPath)
+			// log.Println("UpdateNote", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongtone/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoTone.GetDB()
+	db := backRepo.BackRepoNote.GetDB()
 
 	// Validate input
-	var input orm.ToneAPI
+	var input orm.NoteAPI
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -261,10 +261,10 @@ func (controller *Controller) UpdateTone(c *gin.Context) {
 	}
 
 	// Get model if exist
-	var toneDB orm.ToneDB
+	var noteDB orm.NoteDB
 
-	// fetch the tone
-	query := db.First(&toneDB, c.Param("id"))
+	// fetch the note
+	query := db.First(&noteDB, c.Param("id"))
 
 	if query.Error != nil {
 		var returnError GenericError
@@ -276,10 +276,10 @@ func (controller *Controller) UpdateTone(c *gin.Context) {
 	}
 
 	// update
-	toneDB.CopyBasicFieldsFromTone_WOP(&input.Tone_WOP)
-	toneDB.TonePointersEncoding = input.TonePointersEncoding
+	noteDB.CopyBasicFieldsFromNote_WOP(&input.Note_WOP)
+	noteDB.NotePointersEncoding = input.NotePointersEncoding
 
-	query = db.Model(&toneDB).Updates(toneDB)
+	query = db.Model(&noteDB).Updates(noteDB)
 	if query.Error != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
@@ -290,16 +290,16 @@ func (controller *Controller) UpdateTone(c *gin.Context) {
 	}
 
 	// get an instance (not staged) from DB instance, and call callback function
-	toneNew := new(models.Tone)
-	toneDB.CopyBasicFieldsToTone(toneNew)
+	noteNew := new(models.Note)
+	noteDB.CopyBasicFieldsToNote(noteNew)
 
 	// redeem pointers
-	toneDB.DecodePointers(backRepo, toneNew)
+	noteDB.DecodePointers(backRepo, noteNew)
 
 	// get stage instance from DB instance, and call callback function
-	toneOld := backRepo.BackRepoTone.Map_ToneDBID_TonePtr[toneDB.ID]
-	if toneOld != nil {
-		models.AfterUpdateFromFront(backRepo.GetStage(), toneOld, toneNew)
+	noteOld := backRepo.BackRepoNote.Map_NoteDBID_NotePtr[noteDB.ID]
+	if noteOld != nil {
+		models.AfterUpdateFromFront(backRepo.GetStage(), noteOld, noteNew)
 	}
 
 	// an UPDATE generates a back repo commit increase
@@ -308,23 +308,23 @@ func (controller *Controller) UpdateTone(c *gin.Context) {
 	// generates a checkout
 	backRepo.IncrementPushFromFrontNb()
 
-	// return status OK with the marshalling of the the toneDB
-	c.JSON(http.StatusOK, toneDB)
+	// return status OK with the marshalling of the the noteDB
+	c.JSON(http.StatusOK, noteDB)
 }
 
-// DeleteTone
+// DeleteNote
 //
-// swagger:route DELETE /tones/{ID} tones deleteTone
+// swagger:route DELETE /notes/{ID} notes deleteNote
 //
-// # Delete a tone
+// # Delete a note
 //
 // default: genericError
 //
-//	200: toneDBResponse
-func (controller *Controller) DeleteTone(c *gin.Context) {
+//	200: noteDBResponse
+func (controller *Controller) DeleteNote(c *gin.Context) {
 
-	mutexTone.Lock()
-	defer mutexTone.Unlock()
+	mutexNote.Lock()
+	defer mutexNote.Unlock()
 
 	_values := c.Request.URL.Query()
 	stackPath := ""
@@ -332,18 +332,18 @@ func (controller *Controller) DeleteTone(c *gin.Context) {
 		value := _values["GONG__StackPath"]
 		if len(value) == 1 {
 			stackPath = value[0]
-			// log.Println("DeleteTone", "GONG__StackPath", stackPath)
+			// log.Println("DeleteNote", "GONG__StackPath", stackPath)
 		}
 	}
 	backRepo := controller.Map_BackRepos[stackPath]
 	if backRepo == nil {
 		log.Panic("Stack github.com/fullstack-lang/gongtone/go/models, Unkown stack", stackPath)
 	}
-	db := backRepo.BackRepoTone.GetDB()
+	db := backRepo.BackRepoNote.GetDB()
 
 	// Get model if exist
-	var toneDB orm.ToneDB
-	if err := db.First(&toneDB, c.Param("id")).Error; err != nil {
+	var noteDB orm.NoteDB
+	if err := db.First(&noteDB, c.Param("id")).Error; err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest
 		returnError.Body.Message = err.Error()
@@ -353,16 +353,16 @@ func (controller *Controller) DeleteTone(c *gin.Context) {
 	}
 
 	// with gorm.Model field, default delete is a soft delete. Unscoped() force delete
-	db.Unscoped().Delete(&toneDB)
+	db.Unscoped().Delete(&noteDB)
 
 	// get an instance (not staged) from DB instance, and call callback function
-	toneDeleted := new(models.Tone)
-	toneDB.CopyBasicFieldsToTone(toneDeleted)
+	noteDeleted := new(models.Note)
+	noteDB.CopyBasicFieldsToNote(noteDeleted)
 
 	// get stage instance from DB instance, and call callback function
-	toneStaged := backRepo.BackRepoTone.Map_ToneDBID_TonePtr[toneDB.ID]
-	if toneStaged != nil {
-		models.AfterDeleteFromFront(backRepo.GetStage(), toneStaged, toneDeleted)
+	noteStaged := backRepo.BackRepoNote.Map_NoteDBID_NotePtr[noteDB.ID]
+	if noteStaged != nil {
+		models.AfterDeleteFromFront(backRepo.GetStage(), noteStaged, noteDeleted)
 	}
 
 	// a DELETE generates a back repo commit increase

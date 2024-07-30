@@ -6,9 +6,13 @@ func AfterCreateFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point
-	case *Tone:
-		if stage.OnAfterToneCreateCallback != nil {
-			stage.OnAfterToneCreateCallback.OnAfterCreate(stage, target)
+	case *Freqency:
+		if stage.OnAfterFreqencyCreateCallback != nil {
+			stage.OnAfterFreqencyCreateCallback.OnAfterCreate(stage, target)
+		}
+	case *Note:
+		if stage.OnAfterNoteCreateCallback != nil {
+			stage.OnAfterNoteCreateCallback.OnAfterCreate(stage, target)
 		}
 	default:
 		_ = target
@@ -20,10 +24,15 @@ func AfterUpdateFromFront[Type Gongstruct](stage *StageStruct, old, new *Type) {
 
 	switch oldTarget := any(old).(type) {
 	// insertion point
-	case *Tone:
-		newTarget := any(new).(*Tone)
-		if stage.OnAfterToneUpdateCallback != nil {
-			stage.OnAfterToneUpdateCallback.OnAfterUpdate(stage, oldTarget, newTarget)
+	case *Freqency:
+		newTarget := any(new).(*Freqency)
+		if stage.OnAfterFreqencyUpdateCallback != nil {
+			stage.OnAfterFreqencyUpdateCallback.OnAfterUpdate(stage, oldTarget, newTarget)
+		}
+	case *Note:
+		newTarget := any(new).(*Note)
+		if stage.OnAfterNoteUpdateCallback != nil {
+			stage.OnAfterNoteUpdateCallback.OnAfterUpdate(stage, oldTarget, newTarget)
 		}
 	default:
 		_ = oldTarget
@@ -35,10 +44,15 @@ func AfterDeleteFromFront[Type Gongstruct](stage *StageStruct, staged, front *Ty
 
 	switch front := any(front).(type) {
 	// insertion point
-	case *Tone:
-		if stage.OnAfterToneDeleteCallback != nil {
-			staged := any(staged).(*Tone)
-			stage.OnAfterToneDeleteCallback.OnAfterDelete(stage, staged, front)
+	case *Freqency:
+		if stage.OnAfterFreqencyDeleteCallback != nil {
+			staged := any(staged).(*Freqency)
+			stage.OnAfterFreqencyDeleteCallback.OnAfterDelete(stage, staged, front)
+		}
+	case *Note:
+		if stage.OnAfterNoteDeleteCallback != nil {
+			staged := any(staged).(*Note)
+			stage.OnAfterNoteDeleteCallback.OnAfterDelete(stage, staged, front)
 		}
 	default:
 		_ = front
@@ -50,9 +64,13 @@ func AfterReadFromFront[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point
-	case *Tone:
-		if stage.OnAfterToneReadCallback != nil {
-			stage.OnAfterToneReadCallback.OnAfterRead(stage, target)
+	case *Freqency:
+		if stage.OnAfterFreqencyReadCallback != nil {
+			stage.OnAfterFreqencyReadCallback.OnAfterRead(stage, target)
+		}
+	case *Note:
+		if stage.OnAfterNoteReadCallback != nil {
+			stage.OnAfterNoteReadCallback.OnAfterRead(stage, target)
 		}
 	default:
 		_ = target
@@ -65,8 +83,11 @@ func SetCallbackAfterUpdateFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *Tone:
-		stage.OnAfterToneUpdateCallback = any(callback).(OnAfterUpdateInterface[Tone])
+	case *Freqency:
+		stage.OnAfterFreqencyUpdateCallback = any(callback).(OnAfterUpdateInterface[Freqency])
+	
+	case *Note:
+		stage.OnAfterNoteUpdateCallback = any(callback).(OnAfterUpdateInterface[Note])
 	
 	}
 }
@@ -75,8 +96,11 @@ func SetCallbackAfterCreateFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *Tone:
-		stage.OnAfterToneCreateCallback = any(callback).(OnAfterCreateInterface[Tone])
+	case *Freqency:
+		stage.OnAfterFreqencyCreateCallback = any(callback).(OnAfterCreateInterface[Freqency])
+	
+	case *Note:
+		stage.OnAfterNoteCreateCallback = any(callback).(OnAfterCreateInterface[Note])
 	
 	}
 }
@@ -85,8 +109,11 @@ func SetCallbackAfterDeleteFromFront[Type Gongstruct](stage *StageStruct, callba
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *Tone:
-		stage.OnAfterToneDeleteCallback = any(callback).(OnAfterDeleteInterface[Tone])
+	case *Freqency:
+		stage.OnAfterFreqencyDeleteCallback = any(callback).(OnAfterDeleteInterface[Freqency])
+	
+	case *Note:
+		stage.OnAfterNoteDeleteCallback = any(callback).(OnAfterDeleteInterface[Note])
 	
 	}
 }
@@ -95,8 +122,11 @@ func SetCallbackAfterReadFromFront[Type Gongstruct](stage *StageStruct, callback
 	var instance Type
 	switch any(instance).(type) {
 		// insertion point
-	case *Tone:
-		stage.OnAfterToneReadCallback = any(callback).(OnAfterReadInterface[Tone])
+	case *Freqency:
+		stage.OnAfterFreqencyReadCallback = any(callback).(OnAfterReadInterface[Freqency])
+	
+	case *Note:
+		stage.OnAfterNoteReadCallback = any(callback).(OnAfterReadInterface[Note])
 	
 	}
 }

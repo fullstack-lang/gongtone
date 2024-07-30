@@ -47,12 +47,19 @@ type ValidationError struct {
 func registerControllers(r *gin.Engine) {
 	v1 := r.Group("/api/github.com/fullstack-lang/gongtone/go")
 	{ // insertion point for registrations
-		v1.GET("/v1/tones", GetController().GetTones)
-		v1.GET("/v1/tones/:id", GetController().GetTone)
-		v1.POST("/v1/tones", GetController().PostTone)
-		v1.PATCH("/v1/tones/:id", GetController().UpdateTone)
-		v1.PUT("/v1/tones/:id", GetController().UpdateTone)
-		v1.DELETE("/v1/tones/:id", GetController().DeleteTone)
+		v1.GET("/v1/freqencys", GetController().GetFreqencys)
+		v1.GET("/v1/freqencys/:id", GetController().GetFreqency)
+		v1.POST("/v1/freqencys", GetController().PostFreqency)
+		v1.PATCH("/v1/freqencys/:id", GetController().UpdateFreqency)
+		v1.PUT("/v1/freqencys/:id", GetController().UpdateFreqency)
+		v1.DELETE("/v1/freqencys/:id", GetController().DeleteFreqency)
+
+		v1.GET("/v1/notes", GetController().GetNotes)
+		v1.GET("/v1/notes/:id", GetController().GetNote)
+		v1.POST("/v1/notes", GetController().PostNote)
+		v1.PATCH("/v1/notes/:id", GetController().UpdateNote)
+		v1.PUT("/v1/notes/:id", GetController().UpdateNote)
+		v1.DELETE("/v1/notes/:id", GetController().DeleteNote)
 
 		v1.GET("/v1/commitfrombacknb", GetController().GetLastCommitFromBackNb)
 		v1.GET("/v1/pushfromfrontnb", GetController().GetLastPushFromFrontNb)

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/fullstack-lang/gongtone/go/models"
-
 	// injection point for ident package import declaration{{ImportPackageDeclaration}}
 )
 
@@ -24,7 +23,7 @@ func _(stage *models.StageStruct) {
 
 	// Declaration of instances to stage
 
-	__Tone__000000_A := (&models.Tone{Name: `A`}).Stage(stage)
+	__Tone__000000_A := (&models.Note{Name: `A`}).Stage(stage)
 
 	// Setup of values
 

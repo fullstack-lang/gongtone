@@ -94,28 +94,28 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 	_ = setValueField
 
 	// insertion initialization of objects to stage
-	map_Tone_Identifiers := make(map[*Tone]string)
-	_ = map_Tone_Identifiers
+	map_Freqency_Identifiers := make(map[*Freqency]string)
+	_ = map_Freqency_Identifiers
 
-	toneOrdered := []*Tone{}
-	for tone := range stage.Tones {
-		toneOrdered = append(toneOrdered, tone)
+	freqencyOrdered := []*Freqency{}
+	for freqency := range stage.Freqencys {
+		freqencyOrdered = append(freqencyOrdered, freqency)
 	}
-	sort.Slice(toneOrdered[:], func(i, j int) bool {
-		return toneOrdered[i].Name < toneOrdered[j].Name
+	sort.Slice(freqencyOrdered[:], func(i, j int) bool {
+		return freqencyOrdered[i].Name < freqencyOrdered[j].Name
 	})
-	if len(toneOrdered) > 0 {
+	if len(freqencyOrdered) > 0 {
 		identifiersDecl += "\n"
 	}
-	for idx, tone := range toneOrdered {
+	for idx, freqency := range freqencyOrdered {
 
-		id = generatesIdentifier("Tone", idx, tone.Name)
-		map_Tone_Identifiers[tone] = id
+		id = generatesIdentifier("Freqency", idx, freqency.Name)
+		map_Freqency_Identifiers[freqency] = id
 
 		decl = IdentifiersDecls
 		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
-		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Tone")
-		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", tone.Name)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Freqency")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", freqency.Name)
 		identifiersDecl += decl
 
 		initializerStatements += "\n"
@@ -123,20 +123,90 @@ func (stage *StageStruct) Marshall(file *os.File, modelsPackageName, packageName
 		setValueField = StringInitStatement
 		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
 		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
-		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(tone.Name))
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(freqency.Name))
+		initializerStatements += setValueField
+
+	}
+
+	map_Note_Identifiers := make(map[*Note]string)
+	_ = map_Note_Identifiers
+
+	noteOrdered := []*Note{}
+	for note := range stage.Notes {
+		noteOrdered = append(noteOrdered, note)
+	}
+	sort.Slice(noteOrdered[:], func(i, j int) bool {
+		return noteOrdered[i].Name < noteOrdered[j].Name
+	})
+	if len(noteOrdered) > 0 {
+		identifiersDecl += "\n"
+	}
+	for idx, note := range noteOrdered {
+
+		id = generatesIdentifier("Note", idx, note.Name)
+		map_Note_Identifiers[note] = id
+
+		decl = IdentifiersDecls
+		decl = strings.ReplaceAll(decl, "{{Identifier}}", id)
+		decl = strings.ReplaceAll(decl, "{{GeneratedStructName}}", "Note")
+		decl = strings.ReplaceAll(decl, "{{GeneratedFieldNameValue}}", note.Name)
+		identifiersDecl += decl
+
+		initializerStatements += "\n"
+		// Initialisation of values
+		setValueField = StringInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Name")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", string(note.Name))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Start")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", note.Start))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Duration")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", note.Duration))
+		initializerStatements += setValueField
+
+		setValueField = NumberInitStatement
+		setValueField = strings.ReplaceAll(setValueField, "{{Identifier}}", id)
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldName}}", "Velocity")
+		setValueField = strings.ReplaceAll(setValueField, "{{GeneratedFieldNameValue}}", fmt.Sprintf("%f", note.Velocity))
 		initializerStatements += setValueField
 
 	}
 
 	// insertion initialization of objects to stage
-	for idx, tone := range toneOrdered {
+	for idx, freqency := range freqencyOrdered {
 		var setPointerField string
 		_ = setPointerField
 
-		id = generatesIdentifier("Tone", idx, tone.Name)
-		map_Tone_Identifiers[tone] = id
+		id = generatesIdentifier("Freqency", idx, freqency.Name)
+		map_Freqency_Identifiers[freqency] = id
 
 		// Initialisation of values
+	}
+
+	for idx, note := range noteOrdered {
+		var setPointerField string
+		_ = setPointerField
+
+		id = generatesIdentifier("Note", idx, note.Name)
+		map_Note_Identifiers[note] = id
+
+		// Initialisation of values
+		for _, _freqency := range note.Frequencies {
+			setPointerField = SliceOfPointersFieldInitStatement
+			setPointerField = strings.ReplaceAll(setPointerField, "{{Identifier}}", id)
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldName}}", "Frequencies")
+			setPointerField = strings.ReplaceAll(setPointerField, "{{GeneratedFieldNameValue}}", map_Freqency_Identifiers[_freqency])
+			pointersInitializesStatements += setPointerField
+		}
+
 	}
 
 	res = strings.ReplaceAll(res, "{{Identifiers}}", identifiersDecl)

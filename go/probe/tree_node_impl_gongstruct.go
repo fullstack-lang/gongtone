@@ -52,8 +52,11 @@ func (nodeImplGongstruct *TreeNodeImplGongstruct) OnAfterUpdate(
 	log.Println("NodeImplGongstruct:OnAfterUpdate with: ", nodeImplGongstruct.gongStruct.GetName())
 
 	// insertion point
-	if nodeImplGongstruct.gongStruct.GetName() == "Tone" {
-		fillUpTable[models.Tone](nodeImplGongstruct.probe)
+	if nodeImplGongstruct.gongStruct.GetName() == "Freqency" {
+		fillUpTable[models.Freqency](nodeImplGongstruct.probe)
+	}
+	if nodeImplGongstruct.gongStruct.GetName() == "Note" {
+		fillUpTable[models.Note](nodeImplGongstruct.probe)
 	}
 
 	// set color for node and reset all other nodes color

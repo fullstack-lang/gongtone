@@ -3,9 +3,9 @@
 // usefull for managing pointer ID values that can be nullable
 import { NullInt64 } from './null-int64'
 
-export class ToneAPI {
+export class FreqencyAPI {
 
-	static GONGSTRUCT_NAME = "Tone"
+	static GONGSTRUCT_NAME = "Freqency"
 
 	CreatedAt?: string
 	DeletedAt?: string
@@ -16,9 +16,9 @@ export class ToneAPI {
 
 	// insertion point for other decls
 
-	TonePointersEncoding: TonePointersEncoding = new TonePointersEncoding
+	FreqencyPointersEncoding: FreqencyPointersEncoding = new FreqencyPointersEncoding
 }
 
-export class TonePointersEncoding {
+export class FreqencyPointersEncoding {
 	// insertion point for pointers and slices of pointers encoding fields
 }

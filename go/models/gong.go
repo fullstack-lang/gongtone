@@ -49,15 +49,26 @@ type StageStruct struct {
 	path string
 
 	// insertion point for definition of arrays registering instances
-	Tones           map[*Tone]any
-	Tones_mapString map[string]*Tone
+	Freqencys           map[*Freqency]any
+	Freqencys_mapString map[string]*Freqency
 
 	// insertion point for slice of pointers maps
 
-	OnAfterToneCreateCallback OnAfterCreateInterface[Tone]
-	OnAfterToneUpdateCallback OnAfterUpdateInterface[Tone]
-	OnAfterToneDeleteCallback OnAfterDeleteInterface[Tone]
-	OnAfterToneReadCallback   OnAfterReadInterface[Tone]
+	OnAfterFreqencyCreateCallback OnAfterCreateInterface[Freqency]
+	OnAfterFreqencyUpdateCallback OnAfterUpdateInterface[Freqency]
+	OnAfterFreqencyDeleteCallback OnAfterDeleteInterface[Freqency]
+	OnAfterFreqencyReadCallback   OnAfterReadInterface[Freqency]
+
+	Notes           map[*Note]any
+	Notes_mapString map[string]*Note
+
+	// insertion point for slice of pointers maps
+	Note_Frequencies_reverseMap map[*Freqency]*Note
+
+	OnAfterNoteCreateCallback OnAfterCreateInterface[Note]
+	OnAfterNoteUpdateCallback OnAfterUpdateInterface[Note]
+	OnAfterNoteDeleteCallback OnAfterDeleteInterface[Note]
+	OnAfterNoteReadCallback   OnAfterReadInterface[Note]
 
 	AllModelsStructCreateCallback AllModelsStructCreateInterface
 
@@ -127,8 +138,10 @@ type BackRepoInterface interface {
 	BackupXL(stage *StageStruct, dirPath string)
 	RestoreXL(stage *StageStruct, dirPath string)
 	// insertion point for Commit and Checkout signatures
-	CommitTone(tone *Tone)
-	CheckoutTone(tone *Tone)
+	CommitFreqency(freqency *Freqency)
+	CheckoutFreqency(freqency *Freqency)
+	CommitNote(note *Note)
+	CheckoutNote(note *Note)
 	GetLastCommitFromBackNb() uint
 	GetLastPushFromFrontNb() uint
 }
@@ -136,8 +149,11 @@ type BackRepoInterface interface {
 func NewStage(path string) (stage *StageStruct) {
 
 	stage = &StageStruct{ // insertion point for array initiatialisation
-		Tones:           make(map[*Tone]any),
-		Tones_mapString: make(map[string]*Tone),
+		Freqencys:           make(map[*Freqency]any),
+		Freqencys_mapString: make(map[string]*Freqency),
+
+		Notes:           make(map[*Note]any),
+		Notes_mapString: make(map[string]*Note),
 
 		// end of insertion point
 		Map_GongStructName_InstancesNb: make(map[string]int),
@@ -172,7 +188,8 @@ func (stage *StageStruct) Commit() {
 	}
 
 	// insertion point for computing the map of number of instances per gongstruct
-	stage.Map_GongStructName_InstancesNb["Tone"] = len(stage.Tones)
+	stage.Map_GongStructName_InstancesNb["Freqency"] = len(stage.Freqencys)
+	stage.Map_GongStructName_InstancesNb["Note"] = len(stage.Notes)
 
 }
 
@@ -183,7 +200,8 @@ func (stage *StageStruct) Checkout() {
 
 	stage.ComputeReverseMaps()
 	// insertion point for computing the map of number of instances per gongstruct
-	stage.Map_GongStructName_InstancesNb["Tone"] = len(stage.Tones)
+	stage.Map_GongStructName_InstancesNb["Freqency"] = len(stage.Freqencys)
+	stage.Map_GongStructName_InstancesNb["Note"] = len(stage.Notes)
 
 }
 
@@ -216,80 +234,142 @@ func (stage *StageStruct) RestoreXL(dirPath string) {
 }
 
 // insertion point for cumulative sub template with model space calls
-// Stage puts tone to the model stage
-func (tone *Tone) Stage(stage *StageStruct) *Tone {
-	stage.Tones[tone] = __member
-	stage.Tones_mapString[tone.Name] = tone
+// Stage puts freqency to the model stage
+func (freqency *Freqency) Stage(stage *StageStruct) *Freqency {
+	stage.Freqencys[freqency] = __member
+	stage.Freqencys_mapString[freqency.Name] = freqency
 
-	return tone
+	return freqency
 }
 
-// Unstage removes tone off the model stage
-func (tone *Tone) Unstage(stage *StageStruct) *Tone {
-	delete(stage.Tones, tone)
-	delete(stage.Tones_mapString, tone.Name)
-	return tone
+// Unstage removes freqency off the model stage
+func (freqency *Freqency) Unstage(stage *StageStruct) *Freqency {
+	delete(stage.Freqencys, freqency)
+	delete(stage.Freqencys_mapString, freqency.Name)
+	return freqency
 }
 
-// UnstageVoid removes tone off the model stage
-func (tone *Tone) UnstageVoid(stage *StageStruct) {
-	delete(stage.Tones, tone)
-	delete(stage.Tones_mapString, tone.Name)
+// UnstageVoid removes freqency off the model stage
+func (freqency *Freqency) UnstageVoid(stage *StageStruct) {
+	delete(stage.Freqencys, freqency)
+	delete(stage.Freqencys_mapString, freqency.Name)
 }
 
-// commit tone to the back repo (if it is already staged)
-func (tone *Tone) Commit(stage *StageStruct) *Tone {
-	if _, ok := stage.Tones[tone]; ok {
+// commit freqency to the back repo (if it is already staged)
+func (freqency *Freqency) Commit(stage *StageStruct) *Freqency {
+	if _, ok := stage.Freqencys[freqency]; ok {
 		if stage.BackRepo != nil {
-			stage.BackRepo.CommitTone(tone)
+			stage.BackRepo.CommitFreqency(freqency)
 		}
 	}
-	return tone
+	return freqency
 }
 
-func (tone *Tone) CommitVoid(stage *StageStruct) {
-	tone.Commit(stage)
+func (freqency *Freqency) CommitVoid(stage *StageStruct) {
+	freqency.Commit(stage)
 }
 
-// Checkout tone to the back repo (if it is already staged)
-func (tone *Tone) Checkout(stage *StageStruct) *Tone {
-	if _, ok := stage.Tones[tone]; ok {
+// Checkout freqency to the back repo (if it is already staged)
+func (freqency *Freqency) Checkout(stage *StageStruct) *Freqency {
+	if _, ok := stage.Freqencys[freqency]; ok {
 		if stage.BackRepo != nil {
-			stage.BackRepo.CheckoutTone(tone)
+			stage.BackRepo.CheckoutFreqency(freqency)
 		}
 	}
-	return tone
+	return freqency
 }
 
 // for satisfaction of GongStruct interface
-func (tone *Tone) GetName() (res string) {
-	return tone.Name
+func (freqency *Freqency) GetName() (res string) {
+	return freqency.Name
+}
+
+// Stage puts note to the model stage
+func (note *Note) Stage(stage *StageStruct) *Note {
+	stage.Notes[note] = __member
+	stage.Notes_mapString[note.Name] = note
+
+	return note
+}
+
+// Unstage removes note off the model stage
+func (note *Note) Unstage(stage *StageStruct) *Note {
+	delete(stage.Notes, note)
+	delete(stage.Notes_mapString, note.Name)
+	return note
+}
+
+// UnstageVoid removes note off the model stage
+func (note *Note) UnstageVoid(stage *StageStruct) {
+	delete(stage.Notes, note)
+	delete(stage.Notes_mapString, note.Name)
+}
+
+// commit note to the back repo (if it is already staged)
+func (note *Note) Commit(stage *StageStruct) *Note {
+	if _, ok := stage.Notes[note]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CommitNote(note)
+		}
+	}
+	return note
+}
+
+func (note *Note) CommitVoid(stage *StageStruct) {
+	note.Commit(stage)
+}
+
+// Checkout note to the back repo (if it is already staged)
+func (note *Note) Checkout(stage *StageStruct) *Note {
+	if _, ok := stage.Notes[note]; ok {
+		if stage.BackRepo != nil {
+			stage.BackRepo.CheckoutNote(note)
+		}
+	}
+	return note
+}
+
+// for satisfaction of GongStruct interface
+func (note *Note) GetName() (res string) {
+	return note.Name
 }
 
 // swagger:ignore
 type AllModelsStructCreateInterface interface { // insertion point for Callbacks on creation
-	CreateORMTone(Tone *Tone)
+	CreateORMFreqency(Freqency *Freqency)
+	CreateORMNote(Note *Note)
 }
 
 type AllModelsStructDeleteInterface interface { // insertion point for Callbacks on deletion
-	DeleteORMTone(Tone *Tone)
+	DeleteORMFreqency(Freqency *Freqency)
+	DeleteORMNote(Note *Note)
 }
 
 func (stage *StageStruct) Reset() { // insertion point for array reset
-	stage.Tones = make(map[*Tone]any)
-	stage.Tones_mapString = make(map[string]*Tone)
+	stage.Freqencys = make(map[*Freqency]any)
+	stage.Freqencys_mapString = make(map[string]*Freqency)
+
+	stage.Notes = make(map[*Note]any)
+	stage.Notes_mapString = make(map[string]*Note)
 
 }
 
 func (stage *StageStruct) Nil() { // insertion point for array nil
-	stage.Tones = nil
-	stage.Tones_mapString = nil
+	stage.Freqencys = nil
+	stage.Freqencys_mapString = nil
+
+	stage.Notes = nil
+	stage.Notes_mapString = nil
 
 }
 
 func (stage *StageStruct) Unstage() { // insertion point for array nil
-	for tone := range stage.Tones {
-		tone.Unstage(stage)
+	for freqency := range stage.Freqencys {
+		freqency.Unstage(stage)
+	}
+
+	for note := range stage.Notes {
+		note.Unstage(stage)
 	}
 
 }
@@ -300,7 +380,7 @@ func (stage *StageStruct) Unstage() { // insertion point for array nil
 // - full refactoring of Gongstruct identifiers / fields
 type Gongstruct interface {
 	// insertion point for generic types
-	Tone
+	Freqency | Note
 }
 
 type GongtructBasicField interface {
@@ -313,7 +393,7 @@ type GongtructBasicField interface {
 // - full refactoring of Gongstruct identifiers / fields
 type PointerToGongstruct interface {
 	// insertion point for generic types
-	*Tone
+	*Freqency | *Note
 	GetName() string
 	CommitVoid(*StageStruct)
 	UnstageVoid(stage *StageStruct)
@@ -342,14 +422,16 @@ func GetGongstrucsSorted[T PointerToGongstruct](stage *StageStruct) (sortedSlice
 type GongstructSet interface {
 	map[any]any |
 		// insertion point for generic types
-		map[*Tone]any |
+		map[*Freqency]any |
+		map[*Note]any |
 		map[*any]any // because go does not support an extra "|" at the end of type specifications
 }
 
 type GongstructMapString interface {
 	map[any]any |
 		// insertion point for generic types
-		map[string]*Tone |
+		map[string]*Freqency |
+		map[string]*Note |
 		map[*any]any // because go does not support an extra "|" at the end of type specifications
 }
 
@@ -360,8 +442,10 @@ func GongGetSet[Type GongstructSet](stage *StageStruct) *Type {
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case map[*Tone]any:
-		return any(&stage.Tones).(*Type)
+	case map[*Freqency]any:
+		return any(&stage.Freqencys).(*Type)
+	case map[*Note]any:
+		return any(&stage.Notes).(*Type)
 	default:
 		return nil
 	}
@@ -374,8 +458,10 @@ func GongGetMap[Type GongstructMapString](stage *StageStruct) *Type {
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case map[string]*Tone:
-		return any(&stage.Tones_mapString).(*Type)
+	case map[string]*Freqency:
+		return any(&stage.Freqencys_mapString).(*Type)
+	case map[string]*Note:
+		return any(&stage.Notes_mapString).(*Type)
 	default:
 		return nil
 	}
@@ -388,8 +474,10 @@ func GetGongstructInstancesSet[Type Gongstruct](stage *StageStruct) *map[*Type]a
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case Tone:
-		return any(&stage.Tones).(*map[*Type]any)
+	case Freqency:
+		return any(&stage.Freqencys).(*map[*Type]any)
+	case Note:
+		return any(&stage.Notes).(*map[*Type]any)
 	default:
 		return nil
 	}
@@ -402,8 +490,10 @@ func GetGongstructInstancesSetFromPointerType[Type PointerToGongstruct](stage *S
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case *Tone:
-		return any(&stage.Tones).(*map[Type]any)
+	case *Freqency:
+		return any(&stage.Freqencys).(*map[Type]any)
+	case *Note:
+		return any(&stage.Notes).(*map[Type]any)
 	default:
 		return nil
 	}
@@ -416,8 +506,10 @@ func GetGongstructInstancesMap[Type Gongstruct](stage *StageStruct) *map[string]
 
 	switch any(ret).(type) {
 	// insertion point for generic get functions
-	case Tone:
-		return any(&stage.Tones_mapString).(*map[string]*Type)
+	case Freqency:
+		return any(&stage.Freqencys_mapString).(*map[string]*Type)
+	case Note:
+		return any(&stage.Notes_mapString).(*map[string]*Type)
 	default:
 		return nil
 	}
@@ -432,9 +524,15 @@ func GetAssociationName[Type Gongstruct]() *Type {
 
 	switch any(ret).(type) {
 	// insertion point for instance with special fields
-	case Tone:
-		return any(&Tone{
+	case Freqency:
+		return any(&Freqency{
 			// Initialisation of associations
+		}).(*Type)
+	case Note:
+		return any(&Note{
+			// Initialisation of associations
+			// field is initialized with an instance of Freqency with the name of the field
+			Frequencies: []*Freqency{{Name: "Frequencies"}},
 		}).(*Type)
 	default:
 		return nil
@@ -454,8 +552,13 @@ func GetPointerReverseMap[Start, End Gongstruct](fieldname string, stage *StageS
 
 	switch any(ret).(type) {
 	// insertion point of functions that provide maps for reverse associations
-	// reverse maps of direct associations of Tone
-	case Tone:
+	// reverse maps of direct associations of Freqency
+	case Freqency:
+		switch fieldname {
+		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Note
+	case Note:
 		switch fieldname {
 		// insertion point for per direct association field
 		}
@@ -475,10 +578,23 @@ func GetSliceOfPointersReverseMap[Start, End Gongstruct](fieldname string, stage
 
 	switch any(ret).(type) {
 	// insertion point of functions that provide maps for reverse associations
-	// reverse maps of direct associations of Tone
-	case Tone:
+	// reverse maps of direct associations of Freqency
+	case Freqency:
 		switch fieldname {
 		// insertion point for per direct association field
+		}
+	// reverse maps of direct associations of Note
+	case Note:
+		switch fieldname {
+		// insertion point for per direct association field
+		case "Frequencies":
+			res := make(map[*Freqency]*Note)
+			for note := range stage.Notes {
+				for _, freqency_ := range note.Frequencies {
+					res[freqency_] = note
+				}
+			}
+			return any(res).(map[*End]*Start)
 		}
 	}
 	return nil
@@ -492,8 +608,10 @@ func GetGongstructName[Type Gongstruct]() (res string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case Tone:
-		res = "Tone"
+	case Freqency:
+		res = "Freqency"
+	case Note:
+		res = "Note"
 	}
 	return res
 }
@@ -506,8 +624,10 @@ func GetPointerToGongstructName[Type PointerToGongstruct]() (res string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case *Tone:
-		res = "Tone"
+	case *Freqency:
+		res = "Freqency"
+	case *Note:
+		res = "Note"
 	}
 	return res
 }
@@ -519,8 +639,10 @@ func GetFields[Type Gongstruct]() (res []string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case Tone:
+	case Freqency:
 		res = []string{"Name"}
+	case Note:
+		res = []string{"Name", "Frequencies", "Start", "Duration", "Velocity"}
 	}
 	return
 }
@@ -539,7 +661,13 @@ func GetReverseFields[Type Gongstruct]() (res []ReverseField) {
 	switch any(ret).(type) {
 
 	// insertion point for generic get gongstruct name
-	case Tone:
+	case Freqency:
+		var rf ReverseField
+		_ = rf
+		rf.GongstructName = "Note"
+		rf.Fieldname = "Frequencies"
+		res = append(res, rf)
+	case Note:
 		var rf ReverseField
 		_ = rf
 	}
@@ -553,8 +681,10 @@ func GetFieldsFromPointer[Type PointerToGongstruct]() (res []string) {
 
 	switch any(ret).(type) {
 	// insertion point for generic get gongstruct name
-	case *Tone:
+	case *Freqency:
 		res = []string{"Name"}
+	case *Note:
+		res = []string{"Name", "Frequencies", "Start", "Duration", "Velocity"}
 	}
 	return
 }
@@ -563,11 +693,30 @@ func GetFieldStringValueFromPointer[Type PointerToGongstruct](instance Type, fie
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
-	case *Tone:
+	case *Freqency:
 		switch fieldName {
 		// string value of fields
 		case "Name":
 			res = inferedInstance.Name
+		}
+	case *Note:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = inferedInstance.Name
+		case "Frequencies":
+			for idx, __instance__ := range inferedInstance.Frequencies {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "Start":
+			res = fmt.Sprintf("%f", inferedInstance.Start)
+		case "Duration":
+			res = fmt.Sprintf("%f", inferedInstance.Duration)
+		case "Velocity":
+			res = fmt.Sprintf("%f", inferedInstance.Velocity)
 		}
 	default:
 		_ = inferedInstance
@@ -579,11 +728,30 @@ func GetFieldStringValue[Type Gongstruct](instance Type, fieldName string) (res 
 
 	switch inferedInstance := any(instance).(type) {
 	// insertion point for generic get gongstruct field value
-	case Tone:
+	case Freqency:
 		switch fieldName {
 		// string value of fields
 		case "Name":
 			res = inferedInstance.Name
+		}
+	case Note:
+		switch fieldName {
+		// string value of fields
+		case "Name":
+			res = inferedInstance.Name
+		case "Frequencies":
+			for idx, __instance__ := range inferedInstance.Frequencies {
+				if idx > 0 {
+					res += "\n"
+				}
+				res += __instance__.Name
+			}
+		case "Start":
+			res = fmt.Sprintf("%f", inferedInstance.Start)
+		case "Duration":
+			res = fmt.Sprintf("%f", inferedInstance.Duration)
+		case "Velocity":
+			res = fmt.Sprintf("%f", inferedInstance.Velocity)
 		}
 	default:
 		_ = inferedInstance

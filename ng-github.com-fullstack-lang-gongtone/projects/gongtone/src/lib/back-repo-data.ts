@@ -1,18 +1,24 @@
 // generated code - do not edit
 
 //insertion point for imports
-import { ToneAPI } from './tone-api'
+import { FreqencyAPI } from './freqency-api'
+
+import { NoteAPI } from './note-api'
 
 
 export class BackRepoData {
 	// insertion point for declarations
-	ToneAPIs = new Array<ToneAPI>()
+	FreqencyAPIs = new Array<FreqencyAPI>()
+
+	NoteAPIs = new Array<NoteAPI>()
 
 
 
 	constructor(data?: Partial<BackRepoData>) {
 		// insertion point for copies
-		this.ToneAPIs = data?.ToneAPIs || [];
+		this.FreqencyAPIs = data?.FreqencyAPIs || [];
+
+		this.NoteAPIs = data?.NoteAPIs || [];
 
 	}
 

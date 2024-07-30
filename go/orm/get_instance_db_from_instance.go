@@ -8,7 +8,7 @@ import (
 type GongstructDB interface {
 	// insertion point for generic types
 	// "int" is present to handle the case when no struct is present
-	int | ToneDB
+	int | FreqencyDB | NoteDB
 }
 
 func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
@@ -18,9 +18,13 @@ func GetInstanceDBFromInstance[T models.Gongstruct, T2 GongstructDB](
 
 	switch concreteInstance := any(instance).(type) {
 	// insertion point for per struct backup
-	case *models.Tone:
-		toneInstance := any(concreteInstance).(*models.Tone)
-		ret2 := backRepo.BackRepoTone.GetToneDBFromTonePtr(toneInstance)
+	case *models.Freqency:
+		freqencyInstance := any(concreteInstance).(*models.Freqency)
+		ret2 := backRepo.BackRepoFreqency.GetFreqencyDBFromFreqencyPtr(freqencyInstance)
+		ret = any(ret2).(*T2)
+	case *models.Note:
+		noteInstance := any(concreteInstance).(*models.Note)
+		ret2 := backRepo.BackRepoNote.GetNoteDBFromNotePtr(noteInstance)
 		ret = any(ret2).(*T2)
 	default:
 		_ = concreteInstance
@@ -35,8 +39,13 @@ func GetID[T models.Gongstruct](
 
 	switch inst := any(instance).(type) {
 	// insertion point for per struct backup
-	case *models.Tone:
-		tmp := GetInstanceDBFromInstance[models.Tone, ToneDB](
+	case *models.Freqency:
+		tmp := GetInstanceDBFromInstance[models.Freqency, FreqencyDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
+	case *models.Note:
+		tmp := GetInstanceDBFromInstance[models.Note, NoteDB](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)
@@ -53,8 +62,13 @@ func GetIDPointer[T models.PointerToGongstruct](
 
 	switch inst := any(instance).(type) {
 	// insertion point for per struct backup
-	case *models.Tone:
-		tmp := GetInstanceDBFromInstance[models.Tone, ToneDB](
+	case *models.Freqency:
+		tmp := GetInstanceDBFromInstance[models.Freqency, FreqencyDB](
+			stage, backRepo, inst,
+		)
+		id = int(tmp.ID)
+	case *models.Note:
+		tmp := GetInstanceDBFromInstance[models.Note, NoteDB](
 			stage, backRepo, inst,
 		)
 		id = int(tmp.ID)

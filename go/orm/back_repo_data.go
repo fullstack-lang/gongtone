@@ -4,19 +4,31 @@ package orm
 type BackRepoData struct {
 	// insertion point for slices
 
-	ToneAPIs []*ToneAPI
+	FreqencyAPIs []*FreqencyAPI
+
+	NoteAPIs []*NoteAPI
 }
 
 func CopyBackRepoToBackRepoData(backRepo *BackRepoStruct, backRepoData *BackRepoData) {
 	// insertion point for slices copies
-	for _, toneDB := range backRepo.BackRepoTone.Map_ToneDBID_ToneDB {
+	for _, freqencyDB := range backRepo.BackRepoFreqency.Map_FreqencyDBID_FreqencyDB {
 
-		var toneAPI ToneAPI
-		toneAPI.ID = toneDB.ID
-		toneAPI.TonePointersEncoding = toneDB.TonePointersEncoding
-		toneDB.CopyBasicFieldsToTone_WOP(&toneAPI.Tone_WOP)
+		var freqencyAPI FreqencyAPI
+		freqencyAPI.ID = freqencyDB.ID
+		freqencyAPI.FreqencyPointersEncoding = freqencyDB.FreqencyPointersEncoding
+		freqencyDB.CopyBasicFieldsToFreqency_WOP(&freqencyAPI.Freqency_WOP)
 
-		backRepoData.ToneAPIs = append(backRepoData.ToneAPIs, &toneAPI)
+		backRepoData.FreqencyAPIs = append(backRepoData.FreqencyAPIs, &freqencyAPI)
+	}
+
+	for _, noteDB := range backRepo.BackRepoNote.Map_NoteDBID_NoteDB {
+
+		var noteAPI NoteAPI
+		noteAPI.ID = noteDB.ID
+		noteAPI.NotePointersEncoding = noteDB.NotePointersEncoding
+		noteDB.CopyBasicFieldsToNote_WOP(&noteAPI.Note_WOP)
+
+		backRepoData.NoteAPIs = append(backRepoData.NoteAPIs, &noteAPI)
 	}
 
 }

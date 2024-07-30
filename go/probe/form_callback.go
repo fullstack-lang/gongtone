@@ -18,23 +18,23 @@ var __dummmy__letters = slices.Delete([]string{"a"}, 0, 1)
 var __dummy_orm = orm.BackRepoStruct{}
 
 // insertion point
-func __gong__New__ToneFormCallback(
-	tone *models.Tone,
+func __gong__New__FreqencyFormCallback(
+	freqency *models.Freqency,
 	probe *Probe,
 	formGroup *table.FormGroup,
-) (toneFormCallback *ToneFormCallback) {
-	toneFormCallback = new(ToneFormCallback)
-	toneFormCallback.probe = probe
-	toneFormCallback.tone = tone
-	toneFormCallback.formGroup = formGroup
+) (freqencyFormCallback *FreqencyFormCallback) {
+	freqencyFormCallback = new(FreqencyFormCallback)
+	freqencyFormCallback.probe = probe
+	freqencyFormCallback.freqency = freqency
+	freqencyFormCallback.formGroup = formGroup
 
-	toneFormCallback.CreationMode = (tone == nil)
+	freqencyFormCallback.CreationMode = (freqency == nil)
 
 	return
 }
 
-type ToneFormCallback struct {
-	tone *models.Tone
+type FreqencyFormCallback struct {
+	freqency *models.Freqency
 
 	// If the form call is called on the creation of a new instnace
 	CreationMode bool
@@ -44,54 +44,179 @@ type ToneFormCallback struct {
 	formGroup *table.FormGroup
 }
 
-func (toneFormCallback *ToneFormCallback) OnSave() {
+func (freqencyFormCallback *FreqencyFormCallback) OnSave() {
 
-	log.Println("ToneFormCallback, OnSave")
+	log.Println("FreqencyFormCallback, OnSave")
 
 	// checkout formStage to have the form group on the stage synchronized with the
 	// back repo (and front repo)
-	toneFormCallback.probe.formStage.Checkout()
+	freqencyFormCallback.probe.formStage.Checkout()
 
-	if toneFormCallback.tone == nil {
-		toneFormCallback.tone = new(models.Tone).Stage(toneFormCallback.probe.stageOfInterest)
+	if freqencyFormCallback.freqency == nil {
+		freqencyFormCallback.freqency = new(models.Freqency).Stage(freqencyFormCallback.probe.stageOfInterest)
 	}
-	tone_ := toneFormCallback.tone
-	_ = tone_
+	freqency_ := freqencyFormCallback.freqency
+	_ = freqency_
 
-	for _, formDiv := range toneFormCallback.formGroup.FormDivs {
+	for _, formDiv := range freqencyFormCallback.formGroup.FormDivs {
 		switch formDiv.Name {
 		// insertion point per field
 		case "Name":
-			FormDivBasicFieldToField(&(tone_.Name), formDiv)
+			FormDivBasicFieldToField(&(freqency_.Name), formDiv)
+		case "Note:Frequencies":
+			// we need to retrieve the field owner before the change
+			var pastNoteOwner *models.Note
+			var rf models.ReverseField
+			_ = rf
+			rf.GongstructName = "Note"
+			rf.Fieldname = "Frequencies"
+			reverseFieldOwner := orm.GetReverseFieldOwner(
+				freqencyFormCallback.probe.stageOfInterest,
+				freqencyFormCallback.probe.backRepoOfInterest,
+				freqency_,
+				&rf)
+
+			if reverseFieldOwner != nil {
+				pastNoteOwner = reverseFieldOwner.(*models.Note)
+			}
+			if formDiv.FormFields[0].FormFieldSelect.Value == nil {
+				if pastNoteOwner != nil {
+					idx := slices.Index(pastNoteOwner.Frequencies, freqency_)
+					pastNoteOwner.Frequencies = slices.Delete(pastNoteOwner.Frequencies, idx, idx+1)
+				}
+			} else {
+				// we need to retrieve the field owner after the change
+				// parse all astrcut and get the one with the name in the
+				// div
+				for _note := range *models.GetGongstructInstancesSet[models.Note](freqencyFormCallback.probe.stageOfInterest) {
+
+					// the match is base on the name
+					if _note.GetName() == formDiv.FormFields[0].FormFieldSelect.Value.GetName() {
+						newNoteOwner := _note // we have a match
+						if pastNoteOwner != nil {
+							if newNoteOwner != pastNoteOwner {
+								idx := slices.Index(pastNoteOwner.Frequencies, freqency_)
+								pastNoteOwner.Frequencies = slices.Delete(pastNoteOwner.Frequencies, idx, idx+1)
+								newNoteOwner.Frequencies = append(newNoteOwner.Frequencies, freqency_)
+							}
+						} else {
+							newNoteOwner.Frequencies = append(newNoteOwner.Frequencies, freqency_)
+						}
+					}
+				}
+			}
 		}
 	}
 
 	// manage the suppress operation
-	if toneFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		tone_.Unstage(toneFormCallback.probe.stageOfInterest)
+	if freqencyFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		freqency_.Unstage(freqencyFormCallback.probe.stageOfInterest)
 	}
 
-	toneFormCallback.probe.stageOfInterest.Commit()
-	fillUpTable[models.Tone](
-		toneFormCallback.probe,
+	freqencyFormCallback.probe.stageOfInterest.Commit()
+	fillUpTable[models.Freqency](
+		freqencyFormCallback.probe,
 	)
-	toneFormCallback.probe.tableStage.Commit()
+	freqencyFormCallback.probe.tableStage.Commit()
 
 	// display a new form by reset the form stage
-	if toneFormCallback.CreationMode || toneFormCallback.formGroup.HasSuppressButtonBeenPressed {
-		toneFormCallback.probe.formStage.Reset()
+	if freqencyFormCallback.CreationMode || freqencyFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		freqencyFormCallback.probe.formStage.Reset()
 		newFormGroup := (&table.FormGroup{
 			Name: table.FormGroupDefaultName.ToString(),
-		}).Stage(toneFormCallback.probe.formStage)
-		newFormGroup.OnSave = __gong__New__ToneFormCallback(
+		}).Stage(freqencyFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__FreqencyFormCallback(
 			nil,
-			toneFormCallback.probe,
+			freqencyFormCallback.probe,
 			newFormGroup,
 		)
-		tone := new(models.Tone)
-		FillUpForm(tone, newFormGroup, toneFormCallback.probe)
-		toneFormCallback.probe.formStage.Commit()
+		freqency := new(models.Freqency)
+		FillUpForm(freqency, newFormGroup, freqencyFormCallback.probe)
+		freqencyFormCallback.probe.formStage.Commit()
 	}
 
-	fillUpTree(toneFormCallback.probe)
+	fillUpTree(freqencyFormCallback.probe)
+}
+func __gong__New__NoteFormCallback(
+	note *models.Note,
+	probe *Probe,
+	formGroup *table.FormGroup,
+) (noteFormCallback *NoteFormCallback) {
+	noteFormCallback = new(NoteFormCallback)
+	noteFormCallback.probe = probe
+	noteFormCallback.note = note
+	noteFormCallback.formGroup = formGroup
+
+	noteFormCallback.CreationMode = (note == nil)
+
+	return
+}
+
+type NoteFormCallback struct {
+	note *models.Note
+
+	// If the form call is called on the creation of a new instnace
+	CreationMode bool
+
+	probe *Probe
+
+	formGroup *table.FormGroup
+}
+
+func (noteFormCallback *NoteFormCallback) OnSave() {
+
+	log.Println("NoteFormCallback, OnSave")
+
+	// checkout formStage to have the form group on the stage synchronized with the
+	// back repo (and front repo)
+	noteFormCallback.probe.formStage.Checkout()
+
+	if noteFormCallback.note == nil {
+		noteFormCallback.note = new(models.Note).Stage(noteFormCallback.probe.stageOfInterest)
+	}
+	note_ := noteFormCallback.note
+	_ = note_
+
+	for _, formDiv := range noteFormCallback.formGroup.FormDivs {
+		switch formDiv.Name {
+		// insertion point per field
+		case "Name":
+			FormDivBasicFieldToField(&(note_.Name), formDiv)
+		case "Start":
+			FormDivBasicFieldToField(&(note_.Start), formDiv)
+		case "Duration":
+			FormDivBasicFieldToField(&(note_.Duration), formDiv)
+		case "Velocity":
+			FormDivBasicFieldToField(&(note_.Velocity), formDiv)
+		}
+	}
+
+	// manage the suppress operation
+	if noteFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		note_.Unstage(noteFormCallback.probe.stageOfInterest)
+	}
+
+	noteFormCallback.probe.stageOfInterest.Commit()
+	fillUpTable[models.Note](
+		noteFormCallback.probe,
+	)
+	noteFormCallback.probe.tableStage.Commit()
+
+	// display a new form by reset the form stage
+	if noteFormCallback.CreationMode || noteFormCallback.formGroup.HasSuppressButtonBeenPressed {
+		noteFormCallback.probe.formStage.Reset()
+		newFormGroup := (&table.FormGroup{
+			Name: table.FormGroupDefaultName.ToString(),
+		}).Stage(noteFormCallback.probe.formStage)
+		newFormGroup.OnSave = __gong__New__NoteFormCallback(
+			nil,
+			noteFormCallback.probe,
+			newFormGroup,
+		)
+		note := new(models.Note)
+		FillUpForm(note, newFormGroup, noteFormCallback.probe)
+		noteFormCallback.probe.formStage.Commit()
+	}
+
+	fillUpTree(noteFormCallback.probe)
 }

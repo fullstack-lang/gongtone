@@ -314,7 +314,8 @@ func ParseAstFileFromAst(stage *StageStruct, inFile *ast.File, fset *token.FileS
 var __gong__map_Indentifiers_gongstructName = make(map[string]string)
 
 // insertion point for identifiers maps
-var __gong__map_Tone = make(map[string]*Tone)
+var __gong__map_Freqency = make(map[string]*Freqency)
+var __gong__map_Note = make(map[string]*Note)
 
 // Parser needs to be configured for having the [Name1.Name2] or [pkg.Name1] ...
 // to be recognized as a proper identifier.
@@ -487,10 +488,14 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 									// this is the place where an instance is created
 									switch gongstructName {
 									// insertion point for identifiers
-									case "Tone":
-										instanceTone := (&Tone{Name: instanceName}).Stage(stage)
-										instance = any(instanceTone)
-										__gong__map_Tone[identifier] = instanceTone
+									case "Freqency":
+										instanceFreqency := (&Freqency{Name: instanceName}).Stage(stage)
+										instance = any(instanceFreqency)
+										__gong__map_Freqency[identifier] = instanceFreqency
+									case "Note":
+										instanceNote := (&Note{Name: instanceName}).Stage(stage)
+										instance = any(instanceNote)
+										__gong__map_Note[identifier] = instanceNote
 									}
 									__gong__map_Indentifiers_gongstructName[identifier] = gongstructName
 									return
@@ -527,7 +532,11 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 						}
 						switch gongstructName {
 						// insertion point for basic lit assignments
-						case "Tone":
+						case "Freqency":
+							switch fieldName {
+							// insertion point for date assign code
+							}
+						case "Note":
 							switch fieldName {
 							// insertion point for date assign code
 							}
@@ -556,9 +565,19 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 					}
 					switch gongstructName {
 					// insertion point for slice of pointers assignments
-					case "Tone":
+					case "Freqency":
 						switch fieldName {
 						// insertion point for slice of pointers assign code
+						}
+					case "Note":
+						switch fieldName {
+						// insertion point for slice of pointers assign code
+						case "Frequencies":
+							// remove first and last char
+							targetIdentifier := ident.Name
+							target := __gong__map_Freqency[targetIdentifier]
+							__gong__map_Note[identifier].Frequencies =
+								append(__gong__map_Note[identifier].Frequencies, target)
 						}
 					}
 				case *ast.SelectorExpr:
@@ -609,13 +628,42 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 
 			switch gongstructName {
 			// insertion point for basic lit assignments
-			case "Tone":
+			case "Freqency":
 				switch fieldName {
 				// insertion point for field dependant code
 				case "Name":
 					// remove first and last char
 					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
-					__gong__map_Tone[identifier].Name = fielValue
+					__gong__map_Freqency[identifier].Name = fielValue
+				}
+			case "Note":
+				switch fieldName {
+				// insertion point for field dependant code
+				case "Name":
+					// remove first and last char
+					fielValue := basicLit.Value[1 : len(basicLit.Value)-1]
+					__gong__map_Note[identifier].Name = fielValue
+				case "Start":
+					// convert string to float64
+					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_Note[identifier].Start = exprSign * fielValue
+				case "Duration":
+					// convert string to float64
+					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_Note[identifier].Duration = exprSign * fielValue
+				case "Velocity":
+					// convert string to float64
+					fielValue, err := strconv.ParseFloat(basicLit.Value, 64)
+					if err != nil {
+						log.Fatalln(err)
+					}
+					__gong__map_Note[identifier].Velocity = exprSign * fielValue
 				}
 			}
 		case *ast.Ident:
@@ -631,7 +679,11 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 			}
 			switch gongstructName {
 			// insertion point for bool & pointers assignments
-			case "Tone":
+			case "Freqency":
+				switch fieldName {
+				// insertion point for field dependant code
+				}
+			case "Note":
 				switch fieldName {
 				// insertion point for field dependant code
 				}
@@ -663,7 +715,11 @@ func UnmarshallGongstructStaging(stage *StageStruct, cmap *ast.CommentMap, assig
 				_ = enumValue
 				switch gongstructName {
 				// insertion point for enums assignments
-				case "Tone":
+				case "Freqency":
+					switch fieldName {
+					// insertion point for enum assign code
+					}
+				case "Note":
 					switch fieldName {
 					// insertion point for enum assign code
 					}

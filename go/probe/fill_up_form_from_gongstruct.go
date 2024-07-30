@@ -20,12 +20,24 @@ func FillUpNamedFormFromGongstruct[T models.Gongstruct](instance *T, probe *Prob
 
 	switch instancesTyped := any(instance).(type) {
 	// insertion point
-	case *models.Tone:
+	case *models.Freqency:
 		formGroup := (&gongtable.FormGroup{
 			Name:  formName,
-			Label: "Tone Form",
+			Label: "Freqency Form",
 		}).Stage(formStage)
-		formGroup.OnSave = __gong__New__ToneFormCallback(
+		formGroup.OnSave = __gong__New__FreqencyFormCallback(
+			instancesTyped,
+			probe,
+			formGroup,
+		)
+		formGroup.HasSuppressButton = true
+		FillUpForm(instancesTyped, formGroup, probe)
+	case *models.Note:
+		formGroup := (&gongtable.FormGroup{
+			Name:  formName,
+			Label: "Note Form",
+		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__NoteFormCallback(
 			instancesTyped,
 			probe,
 			formGroup,

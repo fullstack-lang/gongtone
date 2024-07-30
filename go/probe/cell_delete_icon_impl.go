@@ -30,7 +30,9 @@ func (cellDeleteIconImpl *CellDeleteIconImpl[T]) CellIconUpdated(stage *gongtabl
 
 	switch instancesTyped := any(cellDeleteIconImpl.Instance).(type) {
 	// insertion point
-	case *models.Tone:
+	case *models.Freqency:
+		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
+	case *models.Note:
 		instancesTyped.Unstage(cellDeleteIconImpl.probe.stageOfInterest)
 	default:
 		_ = instancesTyped

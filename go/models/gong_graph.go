@@ -5,8 +5,11 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 
 	switch target := any(instance).(type) {
 	// insertion point for stage
-	case *Tone:
-		ok = stage.IsStagedTone(target)
+	case *Freqency:
+		ok = stage.IsStagedFreqency(target)
+
+	case *Note:
+		ok = stage.IsStagedNote(target)
 
 	default:
 		_ = target
@@ -15,9 +18,16 @@ func IsStaged[Type Gongstruct](stage *StageStruct, instance *Type) (ok bool) {
 }
 
 // insertion point for stage per struct
-func (stage *StageStruct) IsStagedTone(tone *Tone) (ok bool) {
+func (stage *StageStruct) IsStagedFreqency(freqency *Freqency) (ok bool) {
 
-	_, ok = stage.Tones[tone]
+	_, ok = stage.Freqencys[freqency]
+
+	return
+}
+
+func (stage *StageStruct) IsStagedNote(note *Note) (ok bool) {
+
+	_, ok = stage.Notes[note]
 
 	return
 }
@@ -30,8 +40,11 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point for stage branch
-	case *Tone:
-		stage.StageBranchTone(target)
+	case *Freqency:
+		stage.StageBranchFreqency(target)
+
+	case *Note:
+		stage.StageBranchNote(target)
 
 	default:
 		_ = target
@@ -39,18 +52,36 @@ func StageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 }
 
 // insertion point for stage branch per struct
-func (stage *StageStruct) StageBranchTone(tone *Tone) {
+func (stage *StageStruct) StageBranchFreqency(freqency *Freqency) {
 
 	// check if instance is already staged
-	if IsStaged(stage, tone) {
+	if IsStaged(stage, freqency) {
 		return
 	}
 
-	tone.Stage(stage)
+	freqency.Stage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
 	//insertion point for the staging of instances referenced by slice of pointers
+
+}
+
+func (stage *StageStruct) StageBranchNote(note *Note) {
+
+	// check if instance is already staged
+	if IsStaged(stage, note) {
+		return
+	}
+
+	note.Stage(stage)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+	for _, _freqency := range note.Frequencies {
+		StageBranch(stage, _freqency)
+	}
 
 }
 
@@ -65,8 +96,12 @@ func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
 
 	switch fromT := any(from).(type) {
 	// insertion point for stage branch
-	case *Tone:
-		toT := CopyBranchTone(mapOrigCopy, fromT)
+	case *Freqency:
+		toT := CopyBranchFreqency(mapOrigCopy, fromT)
+		return any(toT).(*Type)
+
+	case *Note:
+		toT := CopyBranchNote(mapOrigCopy, fromT)
 		return any(toT).(*Type)
 
 	default:
@@ -76,21 +111,43 @@ func CopyBranch[Type Gongstruct](from *Type) (to *Type) {
 }
 
 // insertion point for stage branch per struct
-func CopyBranchTone(mapOrigCopy map[any]any, toneFrom *Tone) (toneTo *Tone) {
+func CopyBranchFreqency(mapOrigCopy map[any]any, freqencyFrom *Freqency) (freqencyTo *Freqency) {
 
-	// toneFrom has already been copied
-	if _toneTo, ok := mapOrigCopy[toneFrom]; ok {
-		toneTo = _toneTo.(*Tone)
+	// freqencyFrom has already been copied
+	if _freqencyTo, ok := mapOrigCopy[freqencyFrom]; ok {
+		freqencyTo = _freqencyTo.(*Freqency)
 		return
 	}
 
-	toneTo = new(Tone)
-	mapOrigCopy[toneFrom] = toneTo
-	toneFrom.CopyBasicFields(toneTo)
+	freqencyTo = new(Freqency)
+	mapOrigCopy[freqencyFrom] = freqencyTo
+	freqencyFrom.CopyBasicFields(freqencyTo)
 
 	//insertion point for the staging of instances referenced by pointers
 
 	//insertion point for the staging of instances referenced by slice of pointers
+
+	return
+}
+
+func CopyBranchNote(mapOrigCopy map[any]any, noteFrom *Note) (noteTo *Note) {
+
+	// noteFrom has already been copied
+	if _noteTo, ok := mapOrigCopy[noteFrom]; ok {
+		noteTo = _noteTo.(*Note)
+		return
+	}
+
+	noteTo = new(Note)
+	mapOrigCopy[noteFrom] = noteTo
+	noteFrom.CopyBasicFields(noteTo)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+	for _, _freqency := range noteFrom.Frequencies {
+		noteTo.Frequencies = append(noteTo.Frequencies, CopyBranchFreqency(mapOrigCopy, _freqency))
+	}
 
 	return
 }
@@ -103,8 +160,11 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 
 	switch target := any(instance).(type) {
 	// insertion point for unstage branch
-	case *Tone:
-		stage.UnstageBranchTone(target)
+	case *Freqency:
+		stage.UnstageBranchFreqency(target)
+
+	case *Note:
+		stage.UnstageBranchNote(target)
 
 	default:
 		_ = target
@@ -112,17 +172,35 @@ func UnstageBranch[Type Gongstruct](stage *StageStruct, instance *Type) {
 }
 
 // insertion point for unstage branch per struct
-func (stage *StageStruct) UnstageBranchTone(tone *Tone) {
+func (stage *StageStruct) UnstageBranchFreqency(freqency *Freqency) {
 
 	// check if instance is already staged
-	if !IsStaged(stage, tone) {
+	if !IsStaged(stage, freqency) {
 		return
 	}
 
-	tone.Unstage(stage)
+	freqency.Unstage(stage)
 
 	//insertion point for the staging of instances referenced by pointers
 
 	//insertion point for the staging of instances referenced by slice of pointers
+
+}
+
+func (stage *StageStruct) UnstageBranchNote(note *Note) {
+
+	// check if instance is already staged
+	if !IsStaged(stage, note) {
+		return
+	}
+
+	note.Unstage(stage)
+
+	//insertion point for the staging of instances referenced by pointers
+
+	//insertion point for the staging of instances referenced by slice of pointers
+	for _, _freqency := range note.Frequencies {
+		UnstageBranch(stage, _freqency)
+	}
 
 }

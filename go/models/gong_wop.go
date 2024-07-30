@@ -7,13 +7,29 @@ import "time"
 var __GONG_time_The_fool_doth_think_he_is_wise__ = time.Hour
 
 // insertion point
-type Tone_WOP struct {
+type Freqency_WOP struct {
 	// insertion point
 	Name string
 }
 
-func (from *Tone) CopyBasicFields(to *Tone) {
+func (from *Freqency) CopyBasicFields(to *Freqency) {
 	// insertion point
 	to.Name = from.Name
+}
+
+type Note_WOP struct {
+	// insertion point
+	Name string
+	Start float64
+	Duration float64
+	Velocity float64
+}
+
+func (from *Note) CopyBasicFields(to *Note) {
+	// insertion point
+	to.Name = from.Name
+	to.Start = from.Start
+	to.Duration = from.Duration
+	to.Velocity = from.Velocity
 }
 

@@ -13,9 +13,13 @@ export * from './lib/back-repo-data'
 export * from './lib/web-socket-service'
 
 
-export * from './lib/tone-api'
-export * from './lib/tone'
-export * from './lib/tone.service'
+export * from './lib/freqency-api'
+export * from './lib/freqency'
+export * from './lib/freqency.service'
+
+export * from './lib/note-api'
+export * from './lib/note'
+export * from './lib/note.service'
 
 
 export * from './lib/StacksNames'

@@ -26,19 +26,32 @@ func FillUpFormFromGongstructName(
 
 	switch gongstructName {
 	// insertion point
-	case "Tone":
+	case "Freqency":
 		formGroup := (&form.FormGroup{
 			Name:  form.FormGroupDefaultName.ToString(),
-			Label: prefix + "Tone Form",
+			Label: prefix + "Freqency Form",
 		}).Stage(formStage)
-		formGroup.OnSave = __gong__New__ToneFormCallback(
+		formGroup.OnSave = __gong__New__FreqencyFormCallback(
 			nil,
 			probe,
 			formGroup,
 		)
-		tone := new(models.Tone)
+		freqency := new(models.Freqency)
 		formGroup.HasSuppressButton = !isNewInstance
-		FillUpForm(tone, formGroup, probe)
+		FillUpForm(freqency, formGroup, probe)
+	case "Note":
+		formGroup := (&form.FormGroup{
+			Name:  form.FormGroupDefaultName.ToString(),
+			Label: prefix + "Note Form",
+		}).Stage(formStage)
+		formGroup.OnSave = __gong__New__NoteFormCallback(
+			nil,
+			probe,
+			formGroup,
+		)
+		note := new(models.Note)
+		formGroup.HasSuppressButton = !isNewInstance
+		FillUpForm(note, formGroup, probe)
 	}
 	formStage.Commit()
 }

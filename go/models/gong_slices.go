@@ -33,8 +33,30 @@ func EvictInOtherSlices[OwningType PointerToGongstruct, FieldType PointerToGongs
 
 	switch owningInstanceInfered := any(owningInstance).(type) {
 	// insertion point
-	case *Tone:
+	case *Freqency:
 		// insertion point per field
+
+	case *Note:
+		// insertion point per field
+		if fieldName == "Frequencies" {
+
+			// walk all instances of the owning type
+			for _instance := range *GetGongstructInstancesSetFromPointerType[OwningType](stage) {
+				if any(_instance).(*Note) != owningInstanceInfered {
+					_inferedTypeInstance := any(_instance).(*Note)
+					reference := make([]FieldType, 0)
+					targetFieldSlice := any(_inferedTypeInstance.Frequencies).([]FieldType)
+					copy(targetFieldSlice, reference)
+					_inferedTypeInstance.Frequencies = _inferedTypeInstance.Frequencies[0:]
+					for _, fieldInstance := range reference {
+						if _, ok := setOfFieldInstances[any(fieldInstance).(FieldType)]; !ok {
+							_inferedTypeInstance.Frequencies =
+								append(_inferedTypeInstance.Frequencies, any(fieldInstance).(*Freqency))
+						}
+					}
+				}
+			}
+		}
 
 	default:
 		_ = owningInstanceInfered // to avoid "declared and not used" error if no named struct has slices
@@ -45,7 +67,18 @@ func EvictInOtherSlices[OwningType PointerToGongstruct, FieldType PointerToGongs
 // Its complexity is in O(n)O(p) where p is the number of pointers
 func (stage *StageStruct) ComputeReverseMaps() {
 	// insertion point per named struct
-	// Compute reverse map for named struct Tone
+	// Compute reverse map for named struct Freqency
 	// insertion point per field
+
+	// Compute reverse map for named struct Note
+	// insertion point per field
+	clear(stage.Note_Frequencies_reverseMap)
+	stage.Note_Frequencies_reverseMap = make(map[*Freqency]*Note)
+	for note := range stage.Notes {
+		_ = note
+		for _, _freqency := range note.Frequencies {
+			stage.Note_Frequencies_reverseMap[_freqency] = note
+		}
+	}
 
 }

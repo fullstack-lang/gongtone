@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GongtonespecificComponent } from './gongtonespecific.component';
+import { GongtoneComponent } from './gongtone.component';
 
-describe('GongtonespecificComponent', () => {
-  let component: GongtonespecificComponent;
-  let fixture: ComponentFixture<GongtonespecificComponent>;
+describe('GongtoneComponent', () => {
+  let component: GongtoneComponent;
+  let fixture: ComponentFixture<GongtoneComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GongtonespecificComponent]
+      imports: [GongtoneComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(GongtonespecificComponent);
+    fixture = TestBed.createComponent(GongtoneComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

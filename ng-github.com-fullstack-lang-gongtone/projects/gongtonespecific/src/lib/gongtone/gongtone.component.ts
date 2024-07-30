@@ -47,13 +47,15 @@ export class GongtoneComponent implements OnInit {
 
       const now = Tone.now();
 
-      this.synth.triggerAttack("D4", now);
-      this.synth.triggerAttack("F4", now + 0.5);
-      this.synth.triggerAttack("A4", now + 1);
-      this.synth.triggerAttack("C5", now + 1.5);
-      this.synth.triggerAttack("E5", now + 2);
-      this.synth.triggerRelease(["D4", "F4"], now + 8);
-      this.synth.triggerRelease(["A4", "C5", "E5"], now + 4);
+      this.synth.triggerAttack("D4", now, 0.5);
+      // this.synth.triggerAttack("F4", now + 0.5);
+      // this.synth.triggerAttack("A4", now + 1);
+      // this.synth.triggerAttack("C5", now + 1.5);
+      // this.synth.triggerAttack("E5", now + 2);
+      // this.synth.triggerRelease(["D4", "F4"], now + 8);
+      // this.synth.triggerRelease(["A4", "C5", "E5"], now + 4);
+
+      this.synth.triggerRelease(["D4"], now + 2);
 
       // Tone.start()
 

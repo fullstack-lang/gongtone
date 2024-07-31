@@ -24,6 +24,11 @@ var (
 
 func main() {
 
+	// notes := gongtone_models.GeneratePianoNotes()
+	// for _, n := range notes {
+	// 	log.Println(n)
+	// }
+
 	log.SetPrefix("gongtone: ")
 	log.SetFlags(0)
 

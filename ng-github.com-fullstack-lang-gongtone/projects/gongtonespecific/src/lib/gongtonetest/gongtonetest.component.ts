@@ -92,6 +92,10 @@ export class GongtonetestComponent {
   Sampler() {
     const sampler = new Tone.Sampler({
       urls: {
+        C3: "C3.mp3",
+        "D#3": "Ds3.mp3",
+        "F#3": "Fs3.mp3",
+        A3: "A3.mp3",
         C4: "C4.mp3",
         "D#4": "Ds4.mp3",
         "F#4": "Fs4.mp3",
@@ -102,7 +106,8 @@ export class GongtonetestComponent {
     }).toDestination();
 
     Tone.loaded().then(() => {
-      sampler.triggerAttackRelease(["Eb4", "G4", "Bb4"], 4);
+      // sampler.triggerAttackRelease(["Eb4", "G4", "Bb4"], 4);
+      sampler.triggerAttackRelease(["Eb3", "G3", "Bb3"], 2);
     });
   }
 

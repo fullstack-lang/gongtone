@@ -21,29 +21,25 @@ import { MaterialFormComponent } from '@vendored_components/github.com/fullstack
 import * as gongtable from '@vendored_components/github.com/fullstack-lang/gongtable/ng-github.com-fullstack-lang-gongtable/projects/gongtable/src/public-api';
 import { PanelComponent } from '@vendored_components/github.com/fullstack-lang/gongdoc/ng-github.com-fullstack-lang-gongdoc/projects/gongdocspecific/src/public-api'
 import { GongsvgDiagrammingComponent } from '@vendored_components/github.com/fullstack-lang/gongsvg/ng-github.com-fullstack-lang-gongsvg/projects/gongsvgspecific/src/lib/gongsvg-diagramming/gongsvg-diagramming'
+import { GongtonetestComponent } from "../../projects/gongtonespecific/src/lib/gongtonetest/gongtonetest.component";
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-
     CommonModule,
     FormsModule,
-
     MatRadioModule,
     MatButtonModule,
     MatIconModule,
-
     AngularSplitModule,
-
     TreeComponent,
     MaterialTableComponent,
     MaterialFormComponent,
     PanelComponent,
-
-    GongtoneComponent
-
+    GongtoneComponent,
+    GongtonetestComponent
   ],
 
   templateUrl: './app.component.html',

@@ -1,6 +1,6 @@
 module github.com/fullstack-lang/gongtone
 
-go 1.22.1
+go 1.23.1
 
 require (
 	github.com/fullstack-lang/gong v0.0.0-20240722132226-035289e5d2cc

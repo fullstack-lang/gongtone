@@ -11,12 +11,9 @@ import (
 	"sync"
 
 	"github.com/fullstack-lang/gongtone/go/models"
+	"github.com/fullstack-lang/gongtone/go/orm/dbgorm"
 
 	"github.com/tealeg/xlsx/v3"
-
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 // BackRepoStruct supports callback functions
@@ -39,41 +36,10 @@ type BackRepoStruct struct {
 
 func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepoStruct) {
 
-	// adjust naming strategy to the stack
-	gormConfig := &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-		},
-	}
-	db, err := gorm.Open(sqlite.Open(filename), gormConfig)
-
-	// since testsim is a multi threaded application. It is important to set up
-	// only one open connexion at a time
-	dbDB_inMemory, err := db.DB()
-	if err != nil {
-		panic("cannot access DB of db" + err.Error())
-	}
-	// it is mandatory to allow parallel access, otherwise, bizarre errors occurs
-	dbDB_inMemory.SetMaxOpenConns(1)
-
-	if err != nil {
-		panic("Failed to connect to database!")
-	}
-
-	// adjust naming strategy to the stack
-	db.Config.NamingStrategy = &schema.NamingStrategy{
-		TablePrefix: "github_com_fullstack_lang_gong_test_go_", // table name prefix
-	}
-
-	err = db.AutoMigrate( // insertion point for reference to structs
+	dbWrapper := dbgorm.NewDBWrapper(filename, "github_com_fullstack_lang_gongtone_go",
 		&FreqencyDB{},
 		&NoteDB{},
 	)
-
-	if err != nil {
-		msg := err.Error()
-		panic("problem with migration " + msg + " on package github.com/fullstack-lang/gong/test/go")
-	}
 
 	backRepo = new(BackRepoStruct)
 
@@ -83,7 +49,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_FreqencyDBID_FreqencyDB:  make(map[uint]*FreqencyDB, 0),
 		Map_FreqencyPtr_FreqencyDBID: make(map[*models.Freqency]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 	backRepo.BackRepoNote = BackRepoNoteStruct{
@@ -91,7 +57,7 @@ func NewBackRepo(stage *models.StageStruct, filename string) (backRepo *BackRepo
 		Map_NoteDBID_NoteDB:  make(map[uint]*NoteDB, 0),
 		Map_NotePtr_NoteDBID: make(map[*models.Note]uint, 0),
 
-		db:    db,
+		db:    dbWrapper,
 		stage: stage,
 	}
 
@@ -124,7 +90,7 @@ func (backRepo *BackRepoStruct) IncrementCommitFromBackNb() uint {
 	backRepo.CommitFromBackNb = backRepo.CommitFromBackNb + 1
 
 	backRepo.broadcastNbCommitToBack()
-	
+
 	return backRepo.CommitFromBackNb
 }
 

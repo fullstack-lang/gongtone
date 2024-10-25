@@ -180,7 +180,7 @@ func (backRepoNote *BackRepoNoteStruct) CommitDeleteInstance(id uint) (Error err
 	// note is not staged anymore, remove noteDB
 	noteDB := backRepoNote.Map_NoteDBID_NoteDB[id]
 	db, _ := backRepoNote.db.Unscoped()
-	_, err := db.Delete(&noteDB)
+	_, err := db.Delete(noteDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -258,7 +258,7 @@ func (backRepoNote *BackRepoNoteStruct) CommitPhaseTwoInstance(backRepo *BackRep
 				append(noteDB.NotePointersEncoding.Frequencies, int(freqencyAssocEnd_DB.ID))
 		}
 
-		_, err := backRepoNote.db.Save(&noteDB)
+		_, err := backRepoNote.db.Save(noteDB)
 		if err != nil {
 			log.Fatal(err)
 		}

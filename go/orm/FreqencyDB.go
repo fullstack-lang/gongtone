@@ -153,7 +153,7 @@ func (backRepoFreqency *BackRepoFreqencyStruct) CommitDeleteInstance(id uint) (E
 	// freqency is not staged anymore, remove freqencyDB
 	freqencyDB := backRepoFreqency.Map_FreqencyDBID_FreqencyDB[id]
 	db, _ := backRepoFreqency.db.Unscoped()
-	_, err := db.Delete(&freqencyDB)
+	_, err := db.Delete(freqencyDB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -213,7 +213,7 @@ func (backRepoFreqency *BackRepoFreqencyStruct) CommitPhaseTwoInstance(backRepo 
 		freqencyDB.CopyBasicFieldsFromFreqency(freqency)
 
 		// insertion point for translating pointers encodings into actual pointers
-		_, err := backRepoFreqency.db.Save(&freqencyDB)
+		_, err := backRepoFreqency.db.Save(freqencyDB)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -280,7 +280,7 @@ func (controller *Controller) UpdateFreqency(c *gin.Context) {
 	freqencyDB.FreqencyPointersEncoding = input.FreqencyPointersEncoding
 
 	db, _ = db.Model(&freqencyDB)
-	_, err = db.Updates(freqencyDB)
+	_, err = db.Updates(&freqencyDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

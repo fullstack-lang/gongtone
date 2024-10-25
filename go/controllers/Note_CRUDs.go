@@ -280,7 +280,7 @@ func (controller *Controller) UpdateNote(c *gin.Context) {
 	noteDB.NotePointersEncoding = input.NotePointersEncoding
 
 	db, _ = db.Model(&noteDB)
-	_, err = db.Updates(noteDB)
+	_, err = db.Updates(&noteDB)
 	if err != nil {
 		var returnError GenericError
 		returnError.Body.Code = http.StatusBadRequest

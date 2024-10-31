@@ -135,13 +135,13 @@ func (db *DBLite) Updates(instanceDB any) (db.DBInterface, error) {
 		if existing, ok := db.freqencyDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongtone/go, record not found")
+			return nil, errors.New("db Freqency github.com/fullstack-lang/gongtone/go, record not found")
 		}
 	case *NoteDB:
 		if existing, ok := db.noteDBs[v.ID]; ok {
 			*existing = *v
 		} else {
-			return nil, errors.New("github.com/fullstack-lang/gongtone/go, record not found")
+			return nil, errors.New("db Note github.com/fullstack-lang/gongtone/go, record not found")
 		}
 	default:
 		return nil, errors.New("github.com/fullstack-lang/gongtone/go, unsupported type in Updates")
@@ -158,20 +158,20 @@ func (db *DBLite) Find(instanceDBs any) (db.DBInterface, error) {
 	switch ptr := instanceDBs.(type) {
 	// insertion point find
 	case *[]FreqencyDB:
-        *ptr = make([]FreqencyDB, 0, len(db.freqencyDBs))
-        for _, v := range db.freqencyDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
+		*ptr = make([]FreqencyDB, 0, len(db.freqencyDBs))
+		for _, v := range db.freqencyDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
 	case *[]NoteDB:
-        *ptr = make([]NoteDB, 0, len(db.noteDBs))
-        for _, v := range db.noteDBs {
-            *ptr = append(*ptr, *v)
-        }
-        return db, nil
-    default:
-        return nil, errors.New("github.com/fullstack-lang/gongtone/go, Find: unsupported type")
-    }
+		*ptr = make([]NoteDB, 0, len(db.noteDBs))
+		for _, v := range db.noteDBs {
+			*ptr = append(*ptr, *v)
+		}
+		return db, nil
+	default:
+		return nil, errors.New("github.com/fullstack-lang/gongtone/go, Find: unsupported type")
+	}
 }
 
 // First retrieves the first record of a type from the database
@@ -199,19 +199,23 @@ func (db *DBLite) First(instanceDB any, conds ...any) (db.DBInterface, error) {
 	case *FreqencyDB:
 		tmp, ok := db.freqencyDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Freqency Unkown entry %d", i))
+		}
+
 		freqencyDB, _ := instanceDB.(*FreqencyDB)
 		*freqencyDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	case *NoteDB:
 		tmp, ok := db.noteDBs[uint(i)]
 
+		if !ok {
+			return nil, errors.New(fmt.Sprintf("db.First Note Unkown entry %d", i))
+		}
+
 		noteDB, _ := instanceDB.(*NoteDB)
 		*noteDB = *tmp
-		if !ok {
-			return nil, errors.New(fmt.Sprintf("Unkown entry %d", i))
-		}
+		
 	default:
 		return nil, errors.New("github.com/fullstack-lang/gongtone/go, Unkown type")
 	}

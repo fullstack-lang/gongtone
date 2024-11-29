@@ -77,7 +77,7 @@ export class GongtoneComponent implements OnInit {
           "D#5": "Ds5.mp3",
         },
         release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
+        baseUrl: "assets/audio/salamander/",
         onload: () => {
 
           Tone.getTransport().start()

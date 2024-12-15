@@ -12,7 +12,7 @@ import (
 // if there are no elements in the stage to marshall
 var _ time.Time
 
-// _ point for meta package dummy declaration{{ImportPackageDummyDeclaration}}
+// Injection point for meta package dummy declaration{{ImportPackageDummyDeclaration}}
 
 // When parsed, those maps will help with the renaming process
 var _ map[string]any = map[string]any{
@@ -24,24 +24,26 @@ func _(stage *models.StageStruct) {
 
 	// Declaration of instances to stage
 
-	__Freqency__000000_B4 := (&models.Freqency{Name: `B4`}).Stage(stage)
-	__Freqency__000001_Bb4 := (&models.Freqency{Name: `Bb4`}).Stage(stage)
-	__Freqency__000002_C5 := (&models.Freqency{Name: `C5`}).Stage(stage)
-	__Freqency__000003_D5 := (&models.Freqency{Name: `D5`}).Stage(stage)
-	__Freqency__000004_Eb4 := (&models.Freqency{Name: `Eb4`}).Stage(stage)
-	__Freqency__000005_G_4 := (&models.Freqency{Name: `G#4`}).Stage(stage)
-	__Freqency__000006_G4 := (&models.Freqency{Name: `G4`}).Stage(stage)
+	__Freqency__000000_B4 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000001_Bb4 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000002_C5 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000003_D5 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000004_Eb4 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000005_G_4 := (&models.Freqency{}).Stage(stage)
+	__Freqency__000006_G4 := (&models.Freqency{}).Stage(stage)
 
-	__Note__000000_1_C5 := (&models.Note{Name: `1 C5`}).Stage(stage)
-	__Note__000001_10_G4 := (&models.Note{Name: `10. G4`}).Stage(stage)
-	__Note__000002_2_B4 := (&models.Note{Name: `2. B4`}).Stage(stage)
-	__Note__000003_3_C5 := (&models.Note{Name: `3. C5`}).Stage(stage)
-	__Note__000004_4_G4 := (&models.Note{Name: `4. G4`}).Stage(stage)
-	__Note__000005_5_G4_ := (&models.Note{Name: `5. G4#`}).Stage(stage)
-	__Note__000006_6_C5 := (&models.Note{Name: `6. C5`}).Stage(stage)
-	__Note__000007_7_B4 := (&models.Note{Name: `7. B4`}).Stage(stage)
-	__Note__000008_8_C5 := (&models.Note{Name: `8. C5`}).Stage(stage)
-	__Note__000009_9_D5 := (&models.Note{Name: `9. D5`}).Stage(stage)
+	__Note__000000_1_C5 := (&models.Note{}).Stage(stage)
+	__Note__000001_10_G4 := (&models.Note{}).Stage(stage)
+	__Note__000002_2_B4 := (&models.Note{}).Stage(stage)
+	__Note__000003_3_C5 := (&models.Note{}).Stage(stage)
+	__Note__000004_4_G4 := (&models.Note{}).Stage(stage)
+	__Note__000005_5_G4_ := (&models.Note{}).Stage(stage)
+	__Note__000006_6_C5 := (&models.Note{}).Stage(stage)
+	__Note__000007_7_B4 := (&models.Note{}).Stage(stage)
+	__Note__000008_8_C5 := (&models.Note{}).Stage(stage)
+	__Note__000009_9_D5 := (&models.Note{}).Stage(stage)
+
+	__Player__000000_player := (&models.Player{}).Stage(stage)
 
 	// Setup of values
 
@@ -118,6 +120,9 @@ func _(stage *models.StageStruct) {
 	__Note__000009_9_D5.Duration = 1.000000
 	__Note__000009_9_D5.Velocity = 0.000000
 	__Note__000009_9_D5.Info = ``
+
+	__Player__000000_player.Name = `player`
+	__Player__000000_player.Status = models.PAUSED
 
 	// Setup of pointers
 	__Note__000000_1_C5.Frequencies = append(__Note__000000_1_C5.Frequencies, __Freqency__000002_C5)

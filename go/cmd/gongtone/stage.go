@@ -123,6 +123,7 @@ func _(stage *models.StageStruct) {
 
 	__Player__000000_player.Name = `player`
 	__Player__000000_player.Status = models.PAUSED
+	__Player__000000_player.PlayOnceAtOnce = false
 
 	// Setup of pointers
 	__Note__000000_1_C5.Frequencies = append(__Note__000000_1_C5.Frequencies, __Freqency__000002_C5)

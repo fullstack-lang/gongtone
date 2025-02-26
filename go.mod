@@ -3,10 +3,10 @@ module github.com/fullstack-lang/gongtone
 go 1.23.1
 
 require (
-	github.com/fullstack-lang/gong v0.0.0-20250225232038-40d9f94ffc08
-	github.com/fullstack-lang/gongdoc v0.0.0-20250225232856-54eb23cef02b
-	github.com/fullstack-lang/gongtable v0.0.0-20250225232532-6f2091eed23f
-	github.com/fullstack-lang/gongtree v0.0.0-20250225232047-6e68f3f06ba8
+	github.com/fullstack-lang/gong v0.0.0-20250226013117-019e80e5a6b4
+	github.com/fullstack-lang/gongdoc v0.0.0-20250225234825-56abdcd745c4
+	github.com/fullstack-lang/gongtable v0.0.0-20250226004141-840913c439ac
+	github.com/fullstack-lang/gongtree v0.0.0-20250226000841-4cd587609d27
 	github.com/fullstack-lang/maticons v0.0.0-20240913013021-27a7b8fd9369
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/static v1.1.3
@@ -24,7 +24,7 @@ require (
 	github.com/cloudwego/base64x v0.1.5 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
-	github.com/fullstack-lang/gongsvg v0.0.0-20250225232044-4904671c6cf9 // indirect
+	github.com/fullstack-lang/gongsvg v0.0.0-20250226000533-94d94d557db8 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v1.0.0 // indirect
 	github.com/glebarez/go-sqlite v1.22.0 // indirect

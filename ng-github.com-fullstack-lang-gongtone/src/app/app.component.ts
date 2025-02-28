@@ -25,24 +25,22 @@ import { GongtonetestComponent } from "../../projects/gongtonespecific/src/lib/g
 
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatRadioModule,
-    MatButtonModule,
-    MatIconModule,
-    AngularSplitModule,
-    TreeComponent,
-    MaterialTableComponent,
-    MaterialFormComponent,
-    PanelComponent,
-    GongtoneComponent,
-    GongtonetestComponent
-  ],
-
-  templateUrl: './app.component.html',
+    selector: 'app-root',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatRadioModule,
+        MatButtonModule,
+        MatIconModule,
+        AngularSplitModule,
+        TreeComponent,
+        MaterialTableComponent,
+        MaterialFormComponent,
+        PanelComponent,
+        GongtoneComponent,
+        GongtonetestComponent
+    ],
+    templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
 
